@@ -11,5 +11,5 @@ public class Venture {
     private String name;
     private List<UnitClass> unitClasses;
     private List<Owner> owners;
-    private int distribution;
+    private double distribution;
 }

@@ -9,5 +9,5 @@ public class UnitClass {
     private String classLabel;
     private int units;
     private int commitment;
-    private int distribution;
+    private double distribution;
 }

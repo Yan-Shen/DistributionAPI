@@ -5,6 +5,7 @@ import com.krakatoaventures.distributionapi.entity.Venture;
 import com.krakatoaventures.distributionapi.service.AllocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ import java.util.List;
  *  - substract commitments from total distribution
  *  - loop through each class, calculate distribution and setDistribution
 * */
+@Component
 public class UnitClassAllocationService implements AllocationService {
     private final Logger log = LoggerFactory.getLogger(UnitClassAllocationService.class);
     private final Venture venture;
@@ -28,16 +30,16 @@ public class UnitClassAllocationService implements AllocationService {
     @Override
     public void allocate(int distribution) {
         // get total units
-        log.info(" UnitClass Allocation Service is Triggered: =========");
+        log.info(" UnitClass Allocation Service is Triggered: ");
         List<UnitClass> unitClasses = venture.getUnitClasses();
         int totalUnits = unitClasses.stream().mapToInt(unitClass->unitClass.getUnits()).sum();
         int totalCommitment = unitClasses.stream().mapToInt(unitClass->unitClass.getCommitment()).sum();
         int distributionExldCommitment = distribution - totalCommitment;
         for(UnitClass unitClass: unitClasses) {
             double allocationPercentage = (double) unitClass.getUnits() / totalUnits;
-            int distributionAllo = (int)((int) distributionExldCommitment * allocationPercentage + unitClass.getCommitment());
+            double distributionAllo = Math.round((distributionExldCommitment * allocationPercentage + unitClass.getCommitment())*100.0)/100.0;
             unitClass.setDistribution(distributionAllo);
-            log.info(unitClass.getClassLabel() + " allocated distribution: " + unitClass.getDistribution());
+            log.info("Class" + unitClass.getClassLabel() + " allocated distribution: " + unitClass.getDistribution());
 
         }
 

@@ -5,6 +5,7 @@ import com.krakatoaventures.distributionapi.entity.Venture;
 import com.krakatoaventures.distributionapi.service.AllocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
@@ -16,6 +17,7 @@ import java.util.*;
  *  - substract commitments from total distribution
  *  - loop through each unitClass,, calculate distribution and setDistribution
 * */
+@Component
 public class OwnerAllocationService implements AllocationService {
     private final Logger log = LoggerFactory.getLogger(OwnerAllocationService.class);
     private final Venture venture;
@@ -30,14 +32,14 @@ public class OwnerAllocationService implements AllocationService {
 //    private int distribution;
     @Override
     public void allocate(int distribution) {
-        log.info(" Owner Allocation Service is Triggered: =========");
+        log.info(" Owner Allocation Service is Triggered: ");
         List<Owner> owners = venture.getOwners();
         int totalUnits = owners.stream().mapToInt(owner->owner.sumUnits()).sum();
         int totalCommitment = owners.stream().mapToInt(owner->owner.getCommitment()).sum();
         int distributionExldCommitment = distribution - totalCommitment;
         for (Owner owner: owners) {
             double allocationPercentage = (double) owner.sumUnits() / totalUnits;
-            int distributionAllo = (int)((int) distributionExldCommitment * allocationPercentage + owner.getCommitment());
+            double distributionAllo = Math.round(( distributionExldCommitment * allocationPercentage + owner.getCommitment())*100.0)/100.0;
             owner.setDistribution(distributionAllo);
             log.info(owner.getName() + " allocated distribution: " + owner.getDistribution());
         }
